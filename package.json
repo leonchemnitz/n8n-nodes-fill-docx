@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-fill-docx",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Fill in DocX Template with Data from JSON object",
 	"keywords": [
 		"n8n-community-node-package"
