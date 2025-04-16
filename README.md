@@ -34,7 +34,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Compatibility
 
-Tested on n8n version 0.222.1 and above.
+Tested on n8n version 1.69.2 and above.
 
 ## Resources
 

@@ -6,14 +6,14 @@
 		"n8n-community-node-package"
 	],
 	"license": "MIT",
-	"homepage": "https://github.com/bramkn/n8n-nodes-fill-docx.git",
+	"homepage": "https://github.com/leonchemnitz/n8n-nodes-fill-docx.git",
 	"author": {
 		"name": "Bram Knuever",
 		"email": "bram@knitco.nl"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/bramkn/n8n-nodes-fill-docx.git"
+		"url": "https://github.com/leonchemnitz/n8n-nodes-fill-docx.git"
 	},
 	"main": "index.js",
 	"scripts": {
