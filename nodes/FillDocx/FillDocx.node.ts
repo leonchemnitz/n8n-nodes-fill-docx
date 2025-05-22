@@ -9,7 +9,7 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
-import { TemplateData, TemplateHandler } from 'easy-template-x';
+import { TemplateData, TemplateHandler, MimeType } from 'easy-template-x';
 
 export class FillDocx implements INodeType {
 	description: INodeTypeDescription = {
@@ -87,6 +87,7 @@ export class FillDocx implements INodeType {
 			const data = this.getNodeParameter('data', itemIndex) as string;
 			const outputFileName = this.getNodeParameter('outputFileName', itemIndex) as string;
 			let templateData;
+
 			try {
 				templateData = JSON.parse(data) as TemplateData;
 			} catch (err) {
@@ -99,6 +100,11 @@ export class FillDocx implements INodeType {
 			if (item.binary === undefined) {
 				throw new NodeOperationError(this.getNode(), 'No binary data exists on item!');
 			}
+
+			// Process template data using the extracted function
+			templateData = await addImageProcessing.bind(this)(templateData, itemIndex);
+
+			console.log(templateData);
 
 			const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, sourceKey);
 
@@ -131,4 +137,56 @@ export class FillDocx implements INodeType {
 
 		return [returnData];
 	}
+}
+
+/**
+ * Process template data to handle images
+ */
+async function addImageProcessing(
+	this: IExecuteFunctions,
+	templateData: TemplateData,
+	itemIndex: number,
+): Promise<TemplateData> {
+	for (const key in templateData) {
+		if (Array.isArray(templateData[key])) {
+			console.log('processing array');
+			// Process each item in the array recursively
+			const processedArray = [];
+			for (const item of templateData[key]) {
+				if (typeof item === 'object' && item !== null) {
+					console.log('processing Array Item');
+					console.log(item);
+					processedArray.push(await addImageProcessing.call(this, item, itemIndex));
+				} else {
+					processedArray.push(item);
+				}
+			}
+			templateData[key] = processedArray;
+		} else if (
+			typeof templateData[key] === 'object' &&
+			templateData[key] !== null &&
+			templateData[key]['_type'] === 'image'
+		) {
+			console.log('processing image');
+			// Process image object
+			if (templateData[key].format && typeof templateData[key].format === 'string') {
+				const format = templateData[key].format.toLowerCase().trim();
+				if (format === 'png') {
+					templateData[key]['format'] = MimeType.Png;
+				} else if (format === 'jpg') {
+					templateData[key]['format'] = MimeType.Jpeg;
+				} else {
+					throw new NodeOperationError(this.getNode(), 'Unsupported image format!');
+				}
+			}
+
+			if (templateData[key].source && typeof templateData[key].source === 'string') {
+				templateData[key]['source'] = await this.helpers.getBinaryDataBuffer(
+					itemIndex,
+					templateData[key]['source'],
+				);
+			}
+		}
+	}
+	return templateData;
 }

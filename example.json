@@ -1,0 +1,11 @@
+{
+	"bild": {
+		"_type": "image",
+		"source": "logo",
+		"format": "png",
+		"width": 200,
+		"height": 200,
+		"altText": "Pariton AI Logo",
+		"transparencyPercent": 80 // optional
+	}
+}
