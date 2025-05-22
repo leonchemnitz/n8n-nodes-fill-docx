@@ -108,15 +108,7 @@ export class FillDocx implements INodeType {
 
 			const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(itemIndex, sourceKey);
 
-			const handler = new TemplateHandler({
-				delimiters: {
-					tagStart: '{{',
-					tagEnd: '}}',
-					containerTagOpen: '#',
-					containerTagClose: '/',
-				},
-				maxXmlDepth: 100,
-			});
+			const handler = new TemplateHandler();
 
 			try {
 				const doc = await handler.process(binaryDataBuffer, templateData);
